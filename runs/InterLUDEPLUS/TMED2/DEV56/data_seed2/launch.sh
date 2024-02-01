@@ -19,7 +19,6 @@ export num_workers=8
 export implementation='InterLUDEPLUS'
 export normalization='unnormalized_HWC'
 
-#hyperparameters inherit from Echo_ClinicalManualScript_torch style
 export resume='last_checkpoint.pth.tar'
 
 #experiment setting
@@ -61,7 +60,6 @@ export unlabeledtrain_batchsize=320 #default
 export em=0 #default
 
 
-#PL config, candidate hypers to search
 export lr=0.1
 export wd=5e-4
 export lambda_u_max=0.5

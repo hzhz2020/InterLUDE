@@ -296,7 +296,6 @@ def set_seed(seed):
     
     
 #learning rate schedule
-#从initial cosine decay 到0 over the total training iterations
 def get_cosine_schedule_with_warmup(optimizer,
                                     num_warmup_iterations,
                                     lr_cycle_length, #total train iterations
@@ -359,7 +358,7 @@ def create_model(args, transform_fn):
                                         pn_strength=args.pn_strength)
     elif args.arch == 'vit':
         if args.dataset_name == 'cifar10' or args.dataset_name == 'cifar100':
-            model = usb_vit.vit_small_patch2_32(num_classes = args.num_classes, pretrained=True, pretrained_path='https://github.com/microsoft/Semi-supervised-learning/releases/download/v.0.0.0/vit_small_patch2_32_mlp_im_1k_32.pth')
+            model = usb_vit.vit_small_patch2_32(num_classes = args.num_classes, pretrained=True, pretrained_path='https://github.com/microsoft/Semi-supervised-learning/releases/download/v.0.0.0/vit_small_patch2_32_mlp_im_1k_32.pth')#from public available weights
             args.scale = 'small'
             args.patch_size = 2
         else:

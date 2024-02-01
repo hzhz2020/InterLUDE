@@ -45,8 +45,6 @@ parser.add_argument('--num_workers', default=0, type=int)
 
 
 ##########################################################FIXED SETTING##########################################################
-#set fix train iterations and eval evey iteration, then derive train epoch
-#对CIFAR10, 100, STL10. 不论labeled set size, 定义总共train 2**20 iterations, 每个epoch 为1024 iterations, 所以共1024 epoch. 每个epoch evaluate 1 次. 
 parser.add_argument('--use_class_weights', default='True', type=str,
                     help='if use_class_weights is True, set class weights to be tie to combo of development_size and data_seed') 
 
@@ -61,10 +59,10 @@ parser.add_argument('--lr_schedule_type', default='CosineLR', choices=['CosineLR
 parser.add_argument('--optimizer_type', default='SGD', type=str) 
 
 parser.add_argument('--resume', default='', type=str,
-                    help='name of the checkpoint (default: none)') #用处不大
+                    help='name of the checkpoint (default: none)') 
 
 parser.add_argument('--resume_checkpoint_fullpath', default='', type=str,
-                    help='fullpath of the checkpoint to resume from(default: none)') #用处不大
+                    help='fullpath of the checkpoint to resume from(default: none)') 
 
 parser.add_argument('--start_epoch', default=0, type=int, help='manual epoch number (useful on restarts)')
 
@@ -108,7 +106,7 @@ parser.add_argument('--mu', default=5, type=int,
                     help='coefficient of unlabeled batch size')
 
 
-parser.add_argument('--unlabeledloss_warmup_schedule_type', default='NoWarmup', choices=['NoWarmup', 'Linear', 'Sigmoid', ], type=str)  #FM defaul 不用warmup, 可尝试加入
+parser.add_argument('--unlabeledloss_warmup_schedule_type', default='NoWarmup', choices=['NoWarmup', 'Linear', 'Sigmoid', ], type=str)  
 
 parser.add_argument('--unlabeledloss_warmup_pos', default=0.4, type=float, help='position at which unlabeled loss warmup ends') #following MixMatch and FixMatch repo
 
@@ -262,7 +260,6 @@ def set_seed(seed):
     
     
 #learning rate schedule
-#从initial cosine decay 到0 over the total training iterations
 def get_cosine_schedule_with_warmup(optimizer,
                                     num_warmup_iterations,
                                     lr_cycle_length, #total train iterations

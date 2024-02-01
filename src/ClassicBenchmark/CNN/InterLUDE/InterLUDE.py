@@ -57,10 +57,10 @@ parser.add_argument('--lr_schedule_type', default='CosineLR', choices=['CosineLR
 parser.add_argument('--optimizer_type', default='SGD', type=str) 
 
 parser.add_argument('--resume', default='', type=str,
-                    help='name of the checkpoint (default: none)') #用处不大
+                    help='name of the checkpoint (default: none)') 
 
 parser.add_argument('--resume_checkpoint_fullpath', default='', type=str,
-                    help='fullpath of the checkpoint to resume from(default: none)') #用处不大
+                    help='fullpath of the checkpoint to resume from(default: none)') 
 
 parser.add_argument('--start_epoch', default=0, type=int, help='manual epoch number (useful on restarts)')
 
@@ -107,7 +107,7 @@ parser.add_argument('--mu', default=7, type=int,
 parser.add_argument('--threshold', default=0.95, type=float,
                     help='pseudo label threshold')
 
-parser.add_argument('--unlabeledloss_warmup_schedule_type', default='NoWarmup', choices=['NoWarmup', 'Linear', 'Sigmoid', ], type=str)  #FM defaul 不用warmup, 可尝试加入
+parser.add_argument('--unlabeledloss_warmup_schedule_type', default='NoWarmup', choices=['NoWarmup', 'Linear', 'Sigmoid', ], type=str)  
 
 parser.add_argument('--unlabeledloss_warmup_pos', default=0.4, type=float, help='position at which unlabeled loss warmup ends') #following MixMatch and FixMatch repo
 
@@ -204,7 +204,6 @@ def set_seed(seed):
     
     
 #learning rate schedule
-#从initial cosine decay 到0 over the total training iterations
 def get_cosine_schedule_with_warmup(optimizer,
                                     num_warmup_iterations,
                                     lr_cycle_length, #total train iterations

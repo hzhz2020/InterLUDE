@@ -240,20 +240,7 @@ def train_one_epoch(args, weights, paired_l_u_loader, model, ema_model, optimize
         
         assert not args.use_DA
         
-#         if args.use_DA: #根据FlexMatch 和 CoMatch implementation, DA 只是用来scale predicted pseudo_label on the weak unlabeled samples.
-#             prGreen('!!!!!!!!!!!use_DA: {}!!!!!!!!!!!'.format(args.use_DA))
-#             if p_model==None:
-#                 p_model=torch.mean(pseudo_label.detach(), dim=0)
-# #                 prCyan('First iteration, p_model: {}'.format(p_model))
-#             else:
-#                 p_model = p_model * 0.999 + torch.mean(pseudo_label.detach(), dim=0) * 0.001
-            
-#             #if use DA, then use p_model and p_target to scale the pseudo_label
-# #             prCyan('Before scaling with DA, pseudo_label: {} shape: {}'.format(pseudo_label, pseudo_label.shape))
-#             pseudo_label = pseudo_label * p_target / p_model
-#             pseudo_label = (pseudo_label/pseudo_label.sum(dim=-1, keepdim=True))
-# #             prCyan('After scaling with DA, pseudo_label: {}, shape: {}'.format(pseudo_label, pseudo_label.shape))
-            
+
         max_probs, targets_u = torch.max(pseudo_label, dim=-1) 
         mask = max_probs.ge(args.threshold).float()
         

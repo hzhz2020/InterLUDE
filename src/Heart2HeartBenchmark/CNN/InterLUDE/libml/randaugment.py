@@ -164,23 +164,6 @@ def fixmatch_augment_pool():
 
 
 
-# class RandAugmentMC(object):
-#     def __init__(self, n, m):
-#         assert n >= 1
-#         assert 1 <= m <= 10
-#         self.n = n
-#         self.m = m
-#         self.augment_pool = fixmatch_augment_pool()
-
-#     def __call__(self, img):
-#         ops = random.choices(self.augment_pool, k=self.n)
-#         for op, max_v, bias in ops:
-#             v = np.random.randint(1, self.m)
-#             if random.random() < 0.5:
-#                 img = op(img, v=v, max_v=max_v, bias=bias)
-#         img = CutoutAbs(img, int(32*0.5))
-#         return img
-
 class RandAugmentMC(object):
     def __init__(self, n, m, resolution):
         assert n >= 1
@@ -196,6 +179,5 @@ class RandAugmentMC(object):
             v = np.random.randint(1, self.m)
             if random.random() < 0.5:
                 img = op(img, v=v, max_v=max_v, bias=bias)
-        img = CutoutAbs(img, int(self.resolution*0.5)) #目前是固定了cut ratio, 之后也可尝试用random.random() 产生（0,1）来作为ratio; Reference: https://github.com/microsoft/Semi-supervised-learning/blob/main/semilearn/datasets/augmentation/randaugment.py
-       
+        img = CutoutAbs(img, int(self.resolution*0.5)) 
         return img

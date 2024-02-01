@@ -60,9 +60,7 @@ class TMED_l_u_paired:
     
     
     def __len__(self):
-        return self.l_size #Without explicitly providing a sampler, the DataLoader determines the range of indices based on the length of the dataset. Every PyTorch Dataset should implement the __len__ method, which returns the number of items in the dataset. The DataLoader uses this method to determine the range of valid indices for the dataset.
-
-
+        return self.l_size 
         
     
     

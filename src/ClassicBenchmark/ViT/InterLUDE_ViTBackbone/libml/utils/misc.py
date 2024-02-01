@@ -13,6 +13,104 @@ logger = logging.getLogger(__name__)
 
 __all__ = ['get_mean_and_std', 'AverageMeter', 'train_one_epoch', 'eval_model', 'save_pickle', 'calculate_plain_accuracy']
 
+#https://github.com/google-research/fixmatch/issues/20
+def interleave_default(l_weak, l_strong, u_weak, u_strong, takeN_l_weak, takeN_l_strong, takeN_u_weak, takeN_u_strong):
+    
+    l_weak_size = len(l_weak)
+    l_strong_size = len(l_strong)
+    u_weak_size = len(u_weak)
+    u_strong_size = len(u_strong)
+    
+    total_size = l_weak_size + l_strong_size + u_weak_size + u_strong_size
+    
+    global_index_l_weak = []
+    global_index_l_strong = []
+    global_index_u_weak = []
+    global_index_u_strong = []
+    
+    global_index = 0
+    
+    new_x = []
+    l_weak_pointer=0
+    l_strong_pointer=0
+    u_weak_pointer=0
+    u_strong_pointer=0
+  
+    
+    while len(new_x)<total_size:
+        ############################################################
+        #takeN_l_weak
+        if l_weak_pointer + takeN_l_weak <= l_weak_size:
+            
+            new_x.append(l_weak[l_weak_pointer:l_weak_pointer+takeN_l_weak])
+            l_weak_pointer += takeN_l_weak
+            global_index_l_weak.extend(list(np.arange(global_index, global_index+takeN_l_weak)))
+            global_index += takeN_l_weak
+            
+        else: 
+            lastN_l_weak = l_weak_size - l_weak_pointer
+            new_x.append(l_weak[l_weak_pointer:l_weak_pointer+lastN_l_weak])
+            l_weak_pointer += lastN_l_weak
+            global_index_l_weak.extend(list(np.arange(global_index, global_index+lastN_l_weak)))
+            global_index += lastN_l_weak
+            
+        ############################################################
+        #takeN_u_weak
+        if u_weak_pointer + takeN_u_weak <= u_weak_size:
+            
+            new_x.append(u_weak[u_weak_pointer:u_weak_pointer+takeN_u_weak])
+            u_weak_pointer += takeN_u_weak
+            global_index_u_weak.extend(list(np.arange(global_index, global_index+takeN_u_weak)))
+            global_index += takeN_u_weak
+            
+        else: 
+            lastN_u_weak = u_weak_size - u_weak_pointer
+            new_x.append(u_weak[u_weak_pointer:u_weak_pointer+lastN_u_weak])
+            u_weak_pointer += lastN_u_weak
+            global_index_u_weak.extend(list(np.arange(global_index, global_index+lastN_u_weak)))
+            global_index += lastN_u_weak
+        
+        
+        ############################################################
+        #takeN_l_strong
+        if l_strong_pointer + takeN_l_strong <= l_strong_size:
+            
+            new_x.append(l_strong[l_strong_pointer:l_strong_pointer+takeN_l_strong])
+            l_strong_pointer += takeN_l_strong
+            global_index_l_strong.extend(list(np.arange(global_index, global_index+takeN_l_strong)))
+            global_index += takeN_l_strong
+            
+        else: 
+            lastN_l_strong = l_strong_size - l_strong_pointer
+            new_x.append(l_strong[l_strong_pointer:l_strong_pointer+lastN_l_strong])
+            l_strong_pointer += lastN_l_strong
+            global_index_l_strong.extend(list(np.arange(global_index, global_index+lastN_l_strong)))
+            global_index += lastN_l_strong
+            
+            
+        ############################################################
+        #takeN_u_strong
+        if u_strong_pointer + takeN_u_strong <= u_strong_size:
+            
+            new_x.append(u_strong[u_strong_pointer:u_strong_pointer+takeN_u_strong])
+            u_strong_pointer += takeN_u_strong
+            global_index_u_strong.extend(list(np.arange(global_index, global_index+takeN_u_strong)))
+            global_index += takeN_u_strong
+            
+        else: 
+            lastN_u_strong = u_strong_size - u_strong_pointer
+            new_x.append(u_strong[u_strong_pointer:u_strong_pointer+lastN_u_strong])
+            u_strong_pointer += lastN_u_strong
+            global_index_u_strong.extend(list(np.arange(global_index, global_index+lastN_u_strong)))
+            global_index += lastN_u_strong
+            
+    
+    new_x = torch.concat(new_x)
+    print(new_x.shape)
+    assert len(new_x) == total_size
+    
+    return new_x, global_index_l_weak, global_index_l_strong, global_index_u_weak, global_index_u_strong
+        
 
 def interleave(x, size):
     s = list(x.shape)
@@ -138,6 +236,24 @@ def train_one_epoch(args, paired_l_u_loader, model, ema_model, optimizer, schedu
         logits_u_strongs = logits[args.labeledtrain_batchsize*2+args.labeledtrain_batchsize*args.mu:]
 #         print('logits_u_strongs: {}, shape: {}'.format(logits_u_strongs, logits_u_strongs.shape)) #--torch.Size([448, 10])
 
+#         #For FM:
+#         #reference: https://github.com/kekmodel/FixMatch-pytorch/blob/master/train.py
+        
+#         takeN_l_weak, takeN_l_strong, takeN_u_weak, takeN_u_strong = 1, 1, 7, 7
+        
+#         inputs, global_index_l_weak, global_index_l_strong, global_index_u_weak, global_index_u_strong = interleave_default(l_weak, l_strong, u_weaks.reshape(-1,3,args.resolution,args.resolution), u_strongs.reshape(-1,3,args.resolution,args.resolution), takeN_l_weak, takeN_l_strong, takeN_u_weak, takeN_u_strong)
+        
+#         inputs = inputs.to(args.device)
+#         l_labels = l_labels.to(args.device).long()
+        
+#         logits = model(inputs)
+        
+#         logits_l_weak = logits[global_index_l_weak]
+#         logits_l_strong = logits[global_index_l_strong]
+#         logits_u_weaks = logits[global_index_u_weak]
+#         logits_u_strongs = logits[global_index_u_strong]
+#         print('logits_l_weak: {}, logits_l_strong: {}, logits_u_weaks: {}, logits_u_strongs: {}'.format(logits_l_weak.shape, logits_l_strong.shape, logits_u_weaks.shape, logits_u_strongs.shape))
+        
             
         assert len(logits_l_weak) == len(logits_l_strong)
         assert len(logits_u_weaks) == len(logits_u_strongs)
@@ -149,8 +265,7 @@ def train_one_epoch(args, paired_l_u_loader, model, ema_model, optimizer, schedu
         #label guessing
         pseudo_label = torch.softmax(logits_u_weaks.detach()/args.temperature, dim=-1)
         
-        if args.use_DA: #根据FlexMatch 和 CoMatch implementation, DA 只是用来scale predicted pseudo_label on the weak unlabeled samples.
-            prGreen('!!!!!!!!!!!use_DA: {}!!!!!!!!!!!'.format(args.use_DA))
+        if args.use_DA: 
             if p_model==None:
                 p_model=torch.mean(pseudo_label.detach(), dim=0)
 #                 prCyan('First iteration, p_model: {}'.format(p_model))

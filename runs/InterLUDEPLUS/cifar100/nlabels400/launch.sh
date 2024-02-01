@@ -16,7 +16,6 @@ export ent_loss_ratio=0.01
 export num_workers=8
 export implementation='InterLUDEPLUS'
 
-#hyperparameters inherit from Echo_ClinicalManualScript_torch style
 export resume='last_checkpoint.pth.tar'
 
 #experiment setting
@@ -53,7 +52,6 @@ export unlabeledtrain_batchsize=448 #default
 export em=0 #default
 
 
-#PL config, candidate hypers to search
 export lr=0.03
 # export wd=5e-4
 export wd=0.001
